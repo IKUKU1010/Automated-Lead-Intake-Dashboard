@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 const STEPS = [
   { id:"tour-stats",    title:"Your performance at a glance", icon:"📊", position:"below",
     body:"These six numbers tell the full story. The most important one is '< 1 Min Response' — the percentage of leads replied to in under 60 seconds. Google uses this to rank your Local Service Ads. The higher it is, the more enquiries you get." },
-  { id:"tour-filters",  title:"Three sources, one inbox — or split by channel", icon:"📥", position:"below",
+  { id:"tour-filters",  title:"Three sources, one inbox — or split by channel", icon:"📥", position:"center",
     body:"Switch between All Sources and the individual channel tabs to see only Google LSA, Website Form, or AnswerForce leads. The status chips below (Needs Review, Auto-Sent, Flagged) filter within whichever source you're viewing. Hover each tab for a description." },
-  { id:"tour-leadlist", title:"Your unified lead inbox", icon:"🟢", position:"right",
+  { id:"tour-leadlist", title:"Your unified lead inbox", icon:"🟢", position:"center",
     body:"Every inbound enquiry lands here in real time. The coloured bar on the left shows status instantly — green for auto-sent, amber for needs review, red for flagged. Leads in review show a draft preview right on the card. Click any lead to open the full detail panel." },
   { id:"tour-stats",    title:"The detail panel — everything in one place", icon:"📋", position:"below",
     scrollToTop: true,
@@ -59,14 +59,21 @@ export function TourOverlay({ onFinish }) {
   const progress = ((step + 1) / STEPS.length) * 100;
 
   const tooltipPos = () => {
-    if (!rect) return { top:"50%", left:"50%", transform:"translate(-50%,-50%)" };
-    const GAP = 16, TW = 340;
+    const TW = 380, GAP = 24;
+    if (current.position === "center" || !rect) {
+      return { top:"50%", left:"50%", transform:"translate(-50%,-50%)" };
+    }
     switch (current.position) {
-      case "below":      return { top: rect.top + rect.height + GAP + window.scrollY, left: Math.min(Math.max(rect.left + rect.width/2 - TW/2, 16), window.innerWidth - TW - 16) };
-      case "below-left": return { top: rect.top + rect.height + GAP + window.scrollY, left: Math.max(rect.left + rect.width - TW, 16) };
-      case "right":      return { top: rect.top + window.scrollY, left: rect.left + rect.width + GAP };
-      case "left":       return { top: rect.top + window.scrollY, left: Math.max(rect.left - TW - GAP, 16) };
-      default:           return { top:"40%", left:"50%", transform:"translate(-50%,-50%)" };
+      case "below":
+        return { top: rect.top + rect.height + GAP + window.scrollY, left: Math.min(Math.max(rect.left + rect.width/2 - TW/2, 16), window.innerWidth - TW - 16) };
+      case "below-left":
+        return { top: rect.top + rect.height + GAP + window.scrollY, left: Math.max(rect.left + rect.width - TW, 16) };
+      case "right":
+        return { top: Math.max(rect.top + window.scrollY - 20, window.scrollY + 80), left: Math.min(rect.left + rect.width + GAP, window.innerWidth - TW - 16) };
+      case "left":
+        return { top: Math.max(rect.top + window.scrollY - 20, window.scrollY + 80), left: Math.max(rect.left - TW - GAP, 16) };
+      default:
+        return { top:"40%", left:"50%", transform:"translate(-50%,-50%)" };
     }
   };
 
@@ -93,7 +100,7 @@ export function TourOverlay({ onFinish }) {
       )}
 
       {/* Tooltip */}
-      <div className="absolute w-[340px] rounded-2xl shadow-2xl transition-all duration-300 bg-white border border-gray-200"
+      <div className="absolute w-[400px] max-w-[calc(100vw-32px)] rounded-2xl shadow-2xl transition-all duration-300 bg-white border border-gray-200"
         style={{ ...tooltipPos(), pointerEvents:"all", opacity:visible?1:0, zIndex:300 }}>
         <div className="p-5">
           <div className="flex items-center justify-between mb-3">
